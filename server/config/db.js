@@ -6,7 +6,8 @@ const connectDB = async () => {
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
     console.error(`Error connecting to MongoDB: ${error.message}`);
-    process.exit(1);
+    console.warn("⚠️  MongoDB is not running locally. The server will continue running, but chat history will not be saved.");
+    // Removed process.exit(1) to prevent the server from crashing if DB is offline.
   }
 };
 
