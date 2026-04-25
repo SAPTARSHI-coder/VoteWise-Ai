@@ -1,8 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { Bot, Map, History, Info } from 'lucide-react';
+import { Bot, History, Info } from 'lucide-react';
+import ChatAssistant from './pages/ChatAssistant';
+import Timeline from './pages/Timeline';
+import Simulator from './pages/Simulator';
 
-// Temporary placeholders for pages until we build them
 const Home = () => (
   <div className="animate-fade-in" style={{ padding: '4rem 2rem', textAlign: 'center' }}>
     <h1 className="text-gradient" style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>VoteWise AI</h1>
@@ -44,9 +46,9 @@ function App() {
       <main style={{ padding: '1rem 2rem', maxWidth: '1200px', margin: '0 auto' }}>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/chat" element={<div className="animate-fade-in"><h2 className="text-gradient">Chat Assistant (Coming soon)</h2></div>} />
-          <Route path="/timeline" element={<div className="animate-fade-in"><h2 className="text-gradient">Election Timeline (Coming soon)</h2></div>} />
-          <Route path="/simulator" element={<div className="animate-fade-in"><h2 className="text-gradient">Scenario Simulator (Coming soon)</h2></div>} />
+          <Route path="/chat" element={<ChatAssistant />} />
+          <Route path="/timeline" element={<Timeline />} />
+          <Route path="/simulator" element={<Simulator />} />
         </Routes>
       </main>
     </Router>
