@@ -1,1 +1,1 @@
-"# VoteWise-AI---Smart-Election-Assistant" 
+"# VoteWise-Ai" 
