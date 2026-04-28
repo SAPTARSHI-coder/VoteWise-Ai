@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { Sparkles, Gamepad2, MessageSquare, Home } from 'lucide-react';
+import { Sparkles, Gamepad2, MessageSquare, Home as HomeIcon } from 'lucide-react';
 import ChatAssistant from './pages/ChatAssistant';
 import Timeline from './pages/Timeline';
 import Simulator from './pages/Simulator';
@@ -22,7 +22,7 @@ const Navbar = () => {
       </Link>
       <div className="nav-links">
         <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>
-          <Home size={15} /> Home
+          <HomeIcon size={15} /> Home
         </Link>
         <Link to="/chat" className={`nav-link ${location.pathname === '/chat' ? 'active' : ''}`}>
           <MessageSquare size={15} /> Assistant
