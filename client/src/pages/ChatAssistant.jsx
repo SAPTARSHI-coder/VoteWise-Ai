@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
+import ReactMarkdown from 'react-markdown';
 import { Send, User, ArrowDown } from 'lucide-react';
 
 const BotIcon = () => (
@@ -75,7 +76,22 @@ const ChatAssistant = () => {
               {msg.role === 'user' ? <User size={14} color="var(--text-secondary)" /> : <BotIcon />}
             </div>
             <div className={`msg-bubble ${msg.role === 'user' ? 'user' : 'ai'}`}>
-              {msg.content}
+              {msg.role === 'user' ? msg.content : (
+                <ReactMarkdown
+                  components={{
+                    p: ({ children }) => <p style={{ margin: '0 0 0.5em 0' }}>{children}</p>,
+                    ul: ({ children }) => <ul style={{ paddingLeft: '1.2em', margin: '0.4em 0' }}>{children}</ul>,
+                    ol: ({ children }) => <ol style={{ paddingLeft: '1.2em', margin: '0.4em 0' }}>{children}</ol>,
+                    li: ({ children }) => <li style={{ margin: '0.2em 0', lineHeight: '1.65' }}>{children}</li>,
+                    strong: ({ children }) => <strong style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{children}</strong>,
+                    em: ({ children }) => <em style={{ color: 'var(--text-secondary)' }}>{children}</em>,
+                    h3: ({ children }) => <h3 style={{ fontSize: '1rem', fontWeight: 600, margin: '0.75em 0 0.25em', color: 'var(--text-primary)' }}>{children}</h3>,
+                    code: ({ children }) => <code style={{ background: 'rgba(0,0,0,0.3)', padding: '0.1em 0.4em', borderRadius: '4px', fontSize: '0.85em' }}>{children}</code>,
+                  }}
+                >
+                  {msg.content}
+                </ReactMarkdown>
+              )}
             </div>
           </div>
         ))}
