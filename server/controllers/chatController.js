@@ -1,4 +1,5 @@
 const { generateAssistantResponse } = require('../services/geminiService');
+const Chat = require('../models/Chat'); // Import the Chat model
 
 const handleChat = async (req, res) => {
   const { message } = req.body;
@@ -10,7 +11,16 @@ const handleChat = async (req, res) => {
   try {
     const aiResponse = await generateAssistantResponse(message);
     
-    // (Optional future addition: Save user message and AI response to MongoDB here)
+    // Save user message and AI response to MongoDB
+    try {
+      const chatLog = new Chat({
+        userMessage: message,
+        aiResponse: aiResponse
+      });
+      await chatLog.save();
+    } catch (dbError) {
+      console.warn("⚠️ Could not save chat to database, but sending response anyway.", dbError.message);
+    }
 
     return res.status(200).json({
       reply: aiResponse,
