@@ -28,13 +28,13 @@ const ChatAssistant = () => {
     setIsLoading(true);
 
     try {
-      // In development, the backend runs on port 5000.
-      const response = await axios.post('http://localhost:5000/api/chat', { message: userMessage });
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const response = await axios.post(`${apiUrl}/api/chat`, { message: userMessage });
       
       setMessages(prev => [...prev, { role: 'assistant', content: response.data.reply }]);
     } catch (error) {
       console.error('Error fetching chat response:', error);
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, I am having trouble connecting to the server right now. Please make sure the backend is running.' }]);
+      setMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, I am having trouble connecting to the server right now. Please try again later.' }]);
     } finally {
       setIsLoading(false);
     }

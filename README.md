@@ -1,34 +1,59 @@
-# VoteWise AI - Smart Election Assistant
+# VoteWise AI — Smart Election Assistant
 
-VoteWise AI is an intelligent, interactive assistant designed to help users understand the democratic election process. Built with the MERN stack and powered by Google Gemini, it serves as an educational tool for first-time and seasoned voters alike to navigate registration, verify facts, and simulate voting day scenarios.
+VoteWise AI is a modern, interactive web application built to educate citizens about the election process, voting timelines, and eligibility. It integrates Google's powerful Gemini AI to provide context-aware, non-partisan assistance.
 
-## 🎯 Chosen Vertical
-**Election Process Education**
-The project focuses on civic tech, explicitly educating citizens about the election process. It aligns with hackathon expectations to build a smart, dynamic assistant providing context-aware guidance.
+This project is built as a complete full-stack solution (MERN + AI) to serve as a hackathon submission.
 
-## 🧩 Approach and System Logic
-VoteWise AI is built on a clean, scalable MERN (MongoDB, Express, React, Node.js) architecture.
+---
 
-1. **AI Chat Assistant (Google Gemini):** The core intelligence is driven by the Google Gemini API (`gemini-2.5-flash`). It is prompted with a strict "election assistant" persona to provide non-partisan, accurate, and concise information. It proactively corrects misinformation (e.g., "Can I vote twice?").
-2. **Interactive UI (React):** The frontend uses a premium, glassmorphism-inspired design system. It uses functional components and React Router to separate concerns (Chat, Timeline, Simulator).
-3. **Scenario Simulator:** A state-driven "choose your own adventure" React component that dynamically tests a user's knowledge based on their context (e.g., first-time voter vs. lost ID).
-4. **Backend API (Express/Node):** A robust REST API handles requests from the client, securely communicates with the Gemini API (protecting secrets via `.env`), and connects to MongoDB via Mongoose.
+## 🌟 Features
 
-## 🚀 How the Solution Works
-* **Assistant:** Users can type questions in the Assistant tab. The React client sends the request to the Express backend, which formats the prompt and queries Gemini. The response is parsed and displayed in a chat-bubble UI.
-* **Timeline Visualizer:** Users can click through a guided timeline (Registration -> Verification -> Voting -> Counting) to visually understand the prerequisites and steps.
-* **Simulator:** Users interact with a branched-logic flow. Selecting incorrect options (like walking straight to an EVM) triggers immediate feedback and educational corrections.
+- **AI Election Assistant**: A smart chatbot powered by Google Gemini AI that answers queries about voting, eligibility, and the democratic process while maintaining strict non-partisanship.
+- **Voting Day Simulator**: An interactive, scenario-based simulator that tests users' knowledge of the polling booth process.
+- **Election Timeline**: A visual step-by-step guide explaining the timeline from registration to result declaration.
+- **Modern UI**: A responsive, glassmorphic design utilizing React, Lucide icons, and modern CSS practices.
 
-## ⚙️ Assumptions Made
-* The user has a stable internet connection to communicate with the Gemini API.
-* The local environment has Node.js and MongoDB installed.
-* Election rules used in the simulator are based on general democratic standards (e.g., age limits, ID verification, electoral rolls).
+---
 
-## 💻 Instructions to Run Locally
+## 🏗️ Architecture & Tech Stack
+
+**Frontend:**
+- React.js (Vite)
+- React Router DOM
+- CSS3 (Custom Glassmorphism)
+- Axios (API Communication)
+- Lucide React (Icons)
+
+**Backend:**
+- Node.js & Express.js
+- MongoDB & Mongoose (Database for future scale/history)
+- `@google/genai` (Google Gemini SDK Integration)
+- CORS & Dotenv
+
+---
+
+## ⚙️ How it Works
+
+1. The user interacts with the React frontend (Assistant, Timeline, or Simulator).
+2. For the Chat Assistant, the frontend sends a `POST` request to the Express.js backend.
+3. The backend validates the request and forwards the prompt to the **Google Gemini API** using specific system instructions to ensure non-partisan, accurate information.
+4. The Gemini response is returned to the backend, which forwards it to the frontend to be displayed cleanly in the chat UI.
+5. Other features (Simulator, Timeline) are seamlessly handled by React state management on the client side.
+
+---
+
+## 🚀 Setup Instructions
+
+To run this project locally, follow these steps:
+
+### Prerequisites
+- Node.js (v16+)
+- MongoDB (Running locally or a MongoDB Atlas URI)
+- A Google Gemini API Key
 
 ### 1. Clone the repository
 \`\`\`bash
-git clone <your-repository-url>
+git clone https://github.com/yourusername/vote-wise-ai.git
 cd vote-wise-ai
 \`\`\`
 
@@ -37,29 +62,60 @@ cd vote-wise-ai
 cd server
 npm install
 \`\`\`
-* Create a `.env` file in the `server` directory (or modify the existing one):
+- Create a \`.env\` file in the `server` directory (you can copy `.env.example`):
 \`\`\`env
 PORT=5000
 MONGO_URI=mongodb://127.0.0.1:27017/votewise
 GEMINI_API_KEY=your_actual_gemini_api_key_here
+CLIENT_URL=http://localhost:5173
 \`\`\`
-* Start the backend server:
+- Start the server:
 \`\`\`bash
-npm start
+npm run dev
 \`\`\`
-*(Make sure your local MongoDB instance is running).*
 
 ### 3. Frontend Setup
 Open a new terminal window:
 \`\`\`bash
 cd client
 npm install
+\`\`\`
+- Create a \`.env\` file in the `client` directory:
+\`\`\`env
+VITE_API_URL=http://localhost:5000
+\`\`\`
+- Start the frontend:
+\`\`\`bash
 npm run dev
 \`\`\`
-* Access the application at \`http://localhost:5173\`
 
-## 🛡️ Evaluation Focus Areas Met
-* **Code Quality:** Modular React components, clean Express MVC architecture, detailed \`.gitignore\`.
-* **Security:** API keys hidden in \`.env\` (not exposed to frontend), robust input validation.
-* **Efficiency:** Lightweight UI, optimized state management in the Simulator, and fast Gemini-flash responses.
-* **Google Services Integration:** Integrated Google GenAI SDK for the core smart assistant logic.
+The app will be running at \`http://localhost:5173\`.
+
+---
+
+## ☁️ Deployment Instructions
+
+The project is structured to be easily deployed to modern cloud providers.
+
+### Frontend Deployment (Vercel/Netlify)
+1. Import the repository into Vercel or Netlify.
+2. Set the root directory to `client`.
+3. Set the Environment Variable: `VITE_API_URL=https://your-backend-url.com`
+4. Deploy! (A `vercel.json` is included to handle React Router rewrites).
+
+### Backend Deployment (Google Cloud Run / Render)
+1. **Cloud Run:** A `Dockerfile` is included in the `server` folder. You can deploy it using the \`gcloud\` CLI:
+   \`\`\`bash
+   cd server
+   gcloud run deploy votewise-api --source . --port 5000 --set-env-vars GEMINI_API_KEY=your_key,MONGO_URI=your_uri,CLIENT_URL=your_frontend_url
+   \`\`\`
+2. **Render/Heroku:** Connect your repository, set the root directory to `server`, build command to `npm install`, and start command to `npm start`. Ensure you add your Environment Variables in the provider's dashboard.
+
+---
+
+## 🛡️ Google Services Used
+This project proudly utilizes the **Google Gemini API** (`@google/genai` SDK) to provide advanced, natural language processing capabilities for the Smart Election Assistant. The model (`gemini-2.5-flash`) was chosen for its fast response times and high accuracy, which is essential for a chat interface.
+
+---
+
+*Built for Hackathon Submission - Ready for Production!*
