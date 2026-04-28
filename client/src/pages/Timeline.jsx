@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, CheckCircle2 } from 'lucide-react';
 
 const steps = [
@@ -34,6 +35,7 @@ const steps = [
 
 const Timeline = () => {
   const [activeStep, setActiveStep] = useState(1);
+  const navigate = useNavigate();
   const current = steps.find(s => s.id === activeStep);
 
   return (
@@ -81,8 +83,13 @@ const Timeline = () => {
             </button>
             <button
               className="btn-primary"
-              onClick={() => setActiveStep(Math.min(steps.length, activeStep + 1))}
-              disabled={activeStep === steps.length}
+              onClick={() => {
+                if (activeStep === steps.length) {
+                  navigate('/');
+                } else {
+                  setActiveStep(Math.min(steps.length, activeStep + 1));
+                }
+              }}
             >
               {activeStep === steps.length ? '✓ Completed' : 'Next Step'} {activeStep < steps.length && <ChevronRight size={17} />}
             </button>
