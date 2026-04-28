@@ -1,12 +1,16 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const rateLimit = require('express-rate-limit');
 const connectDB = require('./config/db');
 
 // Connect to MongoDB
 connectDB();
 
 const app = express();
+
+// Trust the reverse proxy (Cloud Run / Render) so rate limiter uses the correct IP
+app.set('trust proxy', 1);
 
 // Middleware
 app.use(cors({
@@ -19,7 +23,17 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 const chatRoutes = require('./routes/chatRoutes');
-app.use('/api/chat', chatRoutes);
+
+// Rate limiting specifically for the Gemini Chat API (Max 15 requests per 10 minutes per IP)
+const chatLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000, // 10 minutes
+  max: 15, // Limit each IP to 15 requests per `window` (here, per 10 minutes)
+  message: { error: 'Too many requests. Please wait a few minutes before trying again.' },
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
+
+app.use('/api/chat', chatLimiter, chatRoutes);
 
 // Basic route to verify server is running
 app.get('/api/health', (req, res) => {
