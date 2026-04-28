@@ -29,11 +29,21 @@ const chatLimiter = rateLimit({
   windowMs: 10 * 60 * 1000, // 10 minutes
   max: 15, // Limit each IP to 15 requests per `window` (here, per 10 minutes)
   message: { error: 'Too many requests. Please wait a few minutes before trying again.' },
-  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
-app.use('/api/chat', chatLimiter, chatRoutes);
+// GLOBAL daily rate limiting (Protects your Gemini API Free Tier of 1500 req/day)
+const globalDailyLimiter = rateLimit({
+  windowMs: 24 * 60 * 60 * 1000, // 24 hours
+  max: 1000, // Limit ALL users combined to 1000 requests per day
+  keyGenerator: () => 'global_limit', // Groups all requests into one single bucket
+  message: { error: 'Hackathon Quota Exceeded! The app has reached its daily limit of 1000 messages to protect the developer API key. Please try again tomorrow.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use('/api/chat', globalDailyLimiter, chatLimiter, chatRoutes);
 
 // Basic route to verify server is running
 app.get('/api/health', (req, res) => {
