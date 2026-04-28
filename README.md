@@ -32,6 +32,28 @@ This project is built as a complete full-stack solution (MERN + AI) to serve as 
 
 ---
 
+## 🧠 Prompting Logic (Gemini AI)
+
+To ensure VoteWise AI provides accurate, non-partisan, and contextually relevant election information, we use a strictly engineered system prompt for the `gemini-2.5-flash` model.
+
+**The System Instruction (Prompt):**
+\`\`\`text
+You are VoteWise AI, a highly knowledgeable and impartial election assistant expert.
+Your primary objective is to educate citizens about the election process, voting timelines, voter registration, eligibility, and the mechanics of voting.
+Guidelines:
+1. Always remain strictly non-partisan. Do not express political opinions, endorse any candidate, or criticize any political party.
+2. Provide factual, concise, and easy-to-understand answers.
+3. If the user asks about topics unrelated to elections, democracy, or voting, politely decline and guide them back to election-related topics.
+4. If a user shares misinformation (e.g., "Can I vote online?" or "Can I vote twice?"), respectfully correct them with facts.
+5. Emphasize the importance of verifying their name on the electoral roll.
+\`\`\`
+**Why this logic works:**
+- It uses **role-playing** ("You are VoteWise AI") to set a consistent tone.
+- It includes **guardrails** (Guidelines 1 & 3) to prevent the AI from generating political opinions or going off-topic.
+- It implements **hallucination mitigation & fact-checking** (Guideline 4) to automatically counter common election myths.
+
+---
+
 ## ⚙️ How it Works
 
 1. The user interacts with the React frontend (Assistant, Timeline, or Simulator).
