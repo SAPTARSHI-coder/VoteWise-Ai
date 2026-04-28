@@ -1,126 +1,142 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
-import { Send, Bot, User, Loader2 } from 'lucide-react';
+import { Send, User, ArrowDown } from 'lucide-react';
+
+const BotIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+  </svg>
+);
+
+const SUGGESTED_QUESTIONS = [
+  "Am I eligible to vote?",
+  "How do I register as a first-time voter?",
+  "What ID do I need to bring on election day?",
+  "How does the EVM machine work?",
+];
 
 const ChatAssistant = () => {
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: 'Hello! I am VoteWise AI, your smart election assistant. How can I help you today?' }
+    { role: 'assistant', content: 'Hello! I\'m VoteWise AI, your non-partisan election assistant. Ask me anything about voting, registration, eligibility, or the election process.' }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+  useEffect(() => { scrollToBottom(); }, [messages]);
 
-  const handleSend = async (e) => {
-    e.preventDefault();
-    if (!input.trim()) return;
-
-    const userMessage = input.trim();
+  const sendMessage = async (text) => {
+    if (!text.trim() || isLoading) return;
+    const userMessage = text.trim();
     setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
     setInput('');
     setIsLoading(true);
-
     try {
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
       const response = await axios.post(`${apiUrl}/api/chat`, { message: userMessage });
-      
       setMessages(prev => [...prev, { role: 'assistant', content: response.data.reply }]);
     } catch (error) {
-      console.error('Error fetching chat response:', error);
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, I am having trouble connecting to the server right now. Please try again later.' }]);
+      const errMsg = error.response?.data?.error || 'I\'m having trouble connecting right now. Please try again in a moment.';
+      setMessages(prev => [...prev, { role: 'assistant', content: errMsg }]);
     } finally {
       setIsLoading(false);
+      inputRef.current?.focus();
     }
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    sendMessage(input);
+  };
+
+  const showSuggestions = messages.length <= 1;
+
   return (
-    <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', height: '80vh', maxWidth: '800px', margin: '0 auto' }}>
-      <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
-        <h2 className="text-gradient" style={{ fontSize: '2rem' }}>AI Election Assistant</h2>
-        <p style={{ color: 'var(--text-secondary)' }}>Ask me anything about voting, eligibility, or the election process.</p>
-      </div>
-
-      <div className="glass-panel" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          {messages.map((msg, idx) => (
-            <div key={idx} style={{
-              display: 'flex',
-              gap: '1rem',
-              alignItems: 'flex-start',
-              flexDirection: msg.role === 'user' ? 'row-reverse' : 'row'
-            }}>
-              <div style={{ 
-                background: msg.role === 'user' ? 'var(--accent-gradient)' : 'rgba(255,255,255,0.1)', 
-                padding: '0.5rem', 
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0
-              }}>
-                {msg.role === 'user' ? <User size={20} color="white" /> : <Bot size={20} color="white" />}
-              </div>
-              <div style={{
-                background: msg.role === 'user' ? 'rgba(59, 130, 246, 0.2)' : 'rgba(30, 41, 59, 0.6)',
-                padding: '1rem',
-                borderRadius: '12px',
-                border: '1px solid var(--glass-border)',
-                maxWidth: '80%',
-                whiteSpace: 'pre-wrap',
-                lineHeight: '1.5'
-              }}>
-                {msg.content}
-              </div>
-            </div>
-          ))}
-          {isLoading && (
-            <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-              <div style={{ background: 'rgba(255,255,255,0.1)', padding: '0.5rem', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Bot size={20} color="white" />
-              </div>
-              <div style={{ padding: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)' }}>
-                <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> Thinking...
-              </div>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
-
-        <div style={{ padding: '1rem', borderTop: '1px solid var(--glass-border)', background: 'rgba(15, 23, 42, 0.5)' }}>
-          <form onSubmit={handleSend} style={{ display: 'flex', gap: '0.5rem' }}>
-            <input 
-              type="text" 
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Type your question here (e.g., 'Am I eligible to vote?')" 
-              disabled={isLoading}
-              style={{
-                flex: 1,
-                padding: '0.75rem 1rem',
-                borderRadius: '8px',
-                border: '1px solid var(--glass-border)',
-                background: 'rgba(255,255,255,0.05)',
-                color: 'white',
-                outline: 'none',
-                fontFamily: 'inherit'
-              }}
-            />
-            <button type="submit" className="btn-primary" disabled={isLoading} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.75rem', opacity: isLoading ? 0.5 : 1 }}>
-              <Send size={20} />
-            </button>
-          </form>
+    <div className="chat-layout animate-fade-in">
+      {/* Header */}
+      <div className="chat-header">
+        <div className="chat-avatar"><BotIcon /></div>
+        <div className="chat-header-info">
+          <h3>VoteWise AI</h3>
+          <p>Online — Non-partisan election assistant</p>
         </div>
       </div>
-      <style>{`
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-      `}</style>
+
+      {/* Messages */}
+      <div className="chat-messages">
+        {messages.map((msg, idx) => (
+          <div key={idx} className={`msg-row ${msg.role === 'user' ? 'user' : ''}`}>
+            <div className={`msg-icon ${msg.role === 'user' ? 'user-icon' : 'ai'}`}>
+              {msg.role === 'user' ? <User size={14} color="var(--text-secondary)" /> : <BotIcon />}
+            </div>
+            <div className={`msg-bubble ${msg.role === 'user' ? 'user' : 'ai'}`}>
+              {msg.content}
+            </div>
+          </div>
+        ))}
+
+        {isLoading && (
+          <div className="msg-row">
+            <div className="msg-icon ai"><BotIcon /></div>
+            <div className="typing-indicator">
+              <div className="typing-dot" />
+              <div className="typing-dot" />
+              <div className="typing-dot" />
+            </div>
+          </div>
+        )}
+
+        {/* Suggested Questions */}
+        {showSuggestions && !isLoading && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem' }}>
+            {SUGGESTED_QUESTIONS.map((q, i) => (
+              <button
+                key={i}
+                onClick={() => sendMessage(q)}
+                style={{
+                  padding: '0.5rem 0.9rem',
+                  background: 'var(--bg-elevated)',
+                  border: '1px solid var(--border)',
+                  borderRadius: '99px',
+                  color: 'var(--text-secondary)',
+                  fontSize: '0.82rem',
+                  cursor: 'pointer',
+                  transition: 'all 0.18s',
+                  fontFamily: 'inherit',
+                }}
+                onMouseOver={e => { e.currentTarget.style.color = 'var(--text-primary)'; e.currentTarget.style.borderColor = 'var(--border-bright)'; }}
+                onMouseOut={e => { e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
+              >
+                {q}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Input */}
+      <form onSubmit={handleSubmit} className="chat-input-area">
+        <input
+          ref={inputRef}
+          type="text"
+          className="input-field"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Ask about voting, registration, eligibility…"
+          disabled={isLoading}
+          autoFocus
+        />
+        <button type="submit" className="chat-send-btn" disabled={isLoading || !input.trim()}>
+          <Send size={16} />
+        </button>
+      </form>
     </div>
   );
 };

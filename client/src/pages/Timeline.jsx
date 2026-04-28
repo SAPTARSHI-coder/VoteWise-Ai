@@ -1,124 +1,92 @@
 import React, { useState } from 'react';
-import { CheckCircle2, Circle, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, CheckCircle2 } from 'lucide-react';
 
 const steps = [
   {
     id: 1,
-    title: 'Registration',
-    description: 'Ensure you are registered to vote. You must meet age and citizenship requirements.',
-    details: 'Visit your local election portal or NVSP to apply for a voter ID card. Keep your Aadhaar or passport ready for age/address proof.'
+    tag: 'Step 1',
+    title: 'Voter Registration',
+    description: 'Ensure you are registered to vote. You must meet age and citizenship requirements to be eligible.',
+    details: 'Visit your local election portal or NVSP (National Voters\' Service Portal) to apply for a Voter ID card. Keep your Aadhaar or passport ready for age and address proof. You can apply online at voters.eci.gov.in.',
   },
   {
     id: 2,
-    title: 'Verification',
-    description: 'Check your name in the electoral roll.',
-    details: 'Even if you have a voter ID, your name must be on the voter list for your constituency to cast a vote. You can check this online or via SMS.'
+    tag: 'Step 2',
+    title: 'Electoral Roll Verification',
+    description: 'Having a Voter ID is not enough — your name must be on the electoral roll for your constituency.',
+    details: 'Even if you have a valid Voter ID, your name must appear on the voter list for your area. You can verify this online at electoralsearch.eci.gov.in or via SMS. Do this well before election day.',
   },
   {
     id: 3,
+    tag: 'Step 3',
     title: 'Voting Day',
-    description: 'Go to your designated polling booth and cast your vote.',
-    details: 'Carry your Voter ID or alternative approved photo ID. Press the button next to your chosen candidate on the EVM until you hear a beep.'
+    description: 'Head to your designated polling booth with valid photo ID and cast your vote on the EVM.',
+    details: 'Carry your Voter ID or any alternative approved photo ID (Aadhaar, PAN, Passport). Join the queue, get your ID verified, and receive your voter slip. Proceed to the EVM booth and press the button next to your chosen candidate until you hear a beep.',
   },
   {
     id: 4,
+    tag: 'Step 4',
     title: 'Counting & Results',
-    description: 'Votes are counted by the Election Commission and results are declared.',
-    details: 'The counting process is transparent and conducted under strict security. Results are usually announced on the same day counting begins.'
-  }
+    description: 'Votes are counted by the Election Commission of India and results are officially declared.',
+    details: 'The counting process is conducted under strict security and transparent VVPAT paper trail verification. Results are typically announced on the same day counting begins and are published on the ECI official website in real time.',
+  },
 ];
 
 const Timeline = () => {
   const [activeStep, setActiveStep] = useState(1);
+  const current = steps.find(s => s.id === activeStep);
 
   return (
-    <div className="animate-fade-in" style={{ maxWidth: '900px', margin: '0 auto', padding: '2rem 0' }}>
-      <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-        <h2 className="text-gradient" style={{ fontSize: '2.5rem' }}>Election Process Timeline</h2>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem' }}>A step-by-step guide to exercising your democratic right.</p>
+    <div className="page-container animate-fade-in">
+      <div className="page-header">
+        <div className="label">Interactive Guide</div>
+        <h2>Election Process Timeline</h2>
+        <p>A step-by-step walkthrough of exercising your democratic right — from registration to results.</p>
       </div>
 
-      <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
-        {/* Timeline Navigation */}
-        <div className="glass-panel" style={{ flex: '1 1 250px', padding: '2rem' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            {steps.map((step, index) => (
-              <div 
-                key={step.id} 
+      <div className="timeline-layout card" style={{ overflow: 'hidden' }}>
+        {/* Sidebar Nav */}
+        <div className="timeline-nav" style={{ borderRight: '1px solid var(--border)', background: 'var(--bg-elevated)' }}>
+          {steps.map((step, idx) => (
+            <React.Fragment key={step.id}>
+              <button
+                className={`timeline-step-btn ${activeStep === step.id ? 'active' : ''} ${activeStep > step.id ? 'completed' : ''}`}
                 onClick={() => setActiveStep(step.id)}
-                style={{ 
-                  display: 'flex', 
-                  alignItems: 'flex-start', 
-                  gap: '1rem',
-                  cursor: 'pointer',
-                  opacity: activeStep === step.id ? 1 : 0.6,
-                  transition: 'opacity 0.2s',
-                  position: 'relative'
-                }}
               >
-                {/* Connecting Line */}
-                {index < steps.length - 1 && (
-                  <div style={{
-                    position: 'absolute',
-                    left: '11px',
-                    top: '30px',
-                    width: '2px',
-                    height: 'calc(100% + 10px)',
-                    background: activeStep > step.id ? 'var(--accent-primary)' : 'rgba(255,255,255,0.1)',
-                    zIndex: 0
-                  }} />
-                )}
-                
-                <div style={{ zIndex: 1, background: 'var(--bg-primary)', borderRadius: '50%', padding: '2px' }}>
-                  {activeStep > step.id ? (
-                    <CheckCircle2 color="var(--success)" size={24} />
-                  ) : activeStep === step.id ? (
-                    <Circle color="var(--accent-primary)" fill="var(--accent-primary)" size={24} />
-                  ) : (
-                    <Circle color="var(--text-secondary)" size={24} />
-                  )}
+                <div className="step-number">
+                  {activeStep > step.id ? <CheckCircle2 size={16} /> : step.id}
                 </div>
-                <div>
-                  <h3 style={{ fontSize: '1.1rem', color: activeStep === step.id ? 'white' : 'var(--text-primary)', marginTop: '2px' }}>
-                    {step.title}
-                  </h3>
-                </div>
-              </div>
-            ))}
-          </div>
+                <span className="step-label">{step.title}</span>
+              </button>
+              {idx < steps.length - 1 && (
+                <div className={`step-connector ${activeStep > step.id ? 'completed' : ''}`} />
+              )}
+            </React.Fragment>
+          ))}
         </div>
 
-        {/* Timeline Details */}
-        <div className="glass-panel" style={{ flex: '2 1 400px', padding: '2.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          {steps.map((step) => (
-            activeStep === step.id && (
-              <div key={step.id} className="animate-fade-in">
-                <h3 className="text-gradient" style={{ fontSize: '1.8rem', marginBottom: '1rem' }}>{step.id}. {step.title}</h3>
-                <p style={{ fontSize: '1.2rem', marginBottom: '1.5rem', fontWeight: '500' }}>{step.description}</p>
-                <div style={{ background: 'rgba(59, 130, 246, 0.1)', borderLeft: '4px solid var(--accent-primary)', padding: '1.5rem', borderRadius: '0 8px 8px 0' }}>
-                  <p style={{ color: 'var(--text-secondary)', lineHeight: '1.6' }}>{step.details}</p>
-                </div>
-                
-                <div style={{ marginTop: '3rem', display: 'flex', justifyContent: 'space-between' }}>
-                  <button 
-                    onClick={() => setActiveStep(Math.max(1, activeStep - 1))}
-                    disabled={activeStep === 1}
-                    style={{ background: 'transparent', color: activeStep === 1 ? 'rgba(255,255,255,0.2)' : 'var(--text-secondary)', fontWeight: '600', padding: '0.5rem', border: 'none', cursor: activeStep === 1 ? 'default' : 'pointer' }}
-                  >
-                    Previous
-                  </button>
-                  <button 
-                    className="btn-primary"
-                    onClick={() => setActiveStep(Math.min(steps.length, activeStep + 1))}
-                    disabled={activeStep === steps.length}
-                    style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', opacity: activeStep === steps.length ? 0.5 : 1, cursor: activeStep === steps.length ? 'default' : 'pointer' }}
-                  >
-                    {activeStep === steps.length ? 'Completed' : 'Next Step'} <ChevronRight size={18} />
-                  </button>
-                </div>
-              </div>
-            )
-          ))}
+        {/* Detail Panel */}
+        <div className="timeline-detail animate-fade-in" key={activeStep}>
+          <div className="step-tag">{current.tag}</div>
+          <h3 className="text-gradient">{current.title}</h3>
+          <p className="description">{current.description}</p>
+          <div className="detail-box">{current.details}</div>
+          <div className="timeline-nav-buttons">
+            <button
+              className="btn-ghost"
+              onClick={() => setActiveStep(Math.max(1, activeStep - 1))}
+              disabled={activeStep === 1}
+            >
+              <ChevronLeft size={17} /> Previous
+            </button>
+            <button
+              className="btn-primary"
+              onClick={() => setActiveStep(Math.min(steps.length, activeStep + 1))}
+              disabled={activeStep === steps.length}
+            >
+              {activeStep === steps.length ? '✓ Completed' : 'Next Step'} {activeStep < steps.length && <ChevronRight size={17} />}
+            </button>
+          </div>
         </div>
       </div>
     </div>
