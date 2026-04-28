@@ -19,6 +19,8 @@ VoteWise AI is a full-stack, production-ready web application that educates citi
 | 📅 **Election Timeline** | Visual step-by-step guide from voter registration to result declaration |
 | 🛡️ **Rate Limiting** | Global daily request cap + per-IP throttling to protect the free API tier |
 | 💾 **Chat Persistence** | All conversations are logged to MongoDB Atlas for auditability and analytics |
+| 🏠 **Home Navigation** | Dedicated Home link in the navbar with active-state highlighting for all routes |
+| 🃏 **Clickable Feature Cards** | Home page feature cards navigate directly to their respective pages on click |
 
 ---
 

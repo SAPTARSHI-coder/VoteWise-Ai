@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { Sparkles, Timeline as TimelineIcon, Gamepad2, MessageSquare } from 'lucide-react';
+import { Sparkles, Gamepad2, MessageSquare, Home } from 'lucide-react';
 import ChatAssistant from './pages/ChatAssistant';
 import Timeline from './pages/Timeline';
 import Simulator from './pages/Simulator';
@@ -21,6 +21,9 @@ const Navbar = () => {
         VoteWise AI
       </Link>
       <div className="nav-links">
+        <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>
+          <Home size={15} /> Home
+        </Link>
         <Link to="/chat" className={`nav-link ${location.pathname === '/chat' ? 'active' : ''}`}>
           <MessageSquare size={15} /> Assistant
         </Link>
@@ -66,27 +69,27 @@ const Home = () => (
     </div>
 
     <div className="home-features">
-      <div className="feature-card">
+      <Link to="/chat" className="feature-card feature-card-link">
         <div className="feature-icon" style={{ background: 'rgba(59,127,255,0.12)', border: '1px solid rgba(59,127,255,0.2)' }}>
           <MessageSquare size={18} color="var(--blue)" />
         </div>
         <h3>AI Chat Assistant</h3>
         <p>Get instant, accurate answers to any election or voting question — 100% non-partisan and fact-based.</p>
-      </div>
-      <div className="feature-card">
+      </Link>
+      <Link to="/timeline" className="feature-card feature-card-link">
         <div className="feature-icon" style={{ background: 'rgba(139,92,246,0.12)', border: '1px solid rgba(139,92,246,0.2)' }}>
           <Sparkles size={18} color="var(--violet)" />
         </div>
         <h3>Election Timeline</h3>
         <p>Step through the full electoral process — from registration to results — in an interactive visual guide.</p>
-      </div>
-      <div className="feature-card">
+      </Link>
+      <Link to="/simulator" className="feature-card feature-card-link">
         <div className="feature-icon" style={{ background: 'rgba(6,182,212,0.12)', border: '1px solid rgba(6,182,212,0.2)' }}>
           <Gamepad2 size={18} color="var(--teal)" />
         </div>
         <h3>Voting Simulator</h3>
         <p>Practice real-world voting day scenarios and test your knowledge with an interactive decision tree.</p>
-      </div>
+      </Link>
     </div>
   </div>
 );
