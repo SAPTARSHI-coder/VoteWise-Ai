@@ -216,8 +216,36 @@ h1, h2, h3, h4, h5, h6 {
   border-color: var(--border-bright);
 }
 
+/* ─── ACCESSIBILITY ───────────────────────────────────────── */
+
+/* Skip to main content link — hidden until focused via keyboard */
+.skip-link {
+  position: absolute;
+  top: -48px;
+  left: 1rem;
+  z-index: 9999;
+  padding: 0.6rem 1.2rem;
+  background: var(--blue);
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  text-decoration: none;
+  transition: top 0.2s ease;
+  border: 2px solid white;
+}
+.skip-link:focus { top: 0; }
+
+/* Keyboard focus rings — visible only for keyboard users */
+*:focus { outline: none; }
+*:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 /* ─── BUTTONS ─────────────────────────────────────────────── */
-button { font-family: inherit; cursor: pointer; border: none; outline: none; }
+button { font-family: inherit; cursor: pointer; border: none; }
 
 .btn-primary {
   display: inline-flex;
