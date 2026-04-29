@@ -1,63 +1,18 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { Sparkles, Gamepad2, MessageSquare, Home as HomeIcon } from 'lucide-react';
-import ChatAssistant from './pages/ChatAssistant';
-import Timeline from './pages/Timeline';
-import Simulator from './pages/Simulator';
+import React, { Suspense, lazy } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './components/Navbar';
 import './index.css';
 
-import Navbar from './components/Navbar';
+// Lazy loading for efficiency win
+const Home = lazy(() => import('./pages/Home'));
+const ChatAssistant = lazy(() => import('./pages/ChatAssistant'));
+const Timeline = lazy(() => import('./pages/Timeline'));
+const Simulator = lazy(() => import('./pages/Simulator'));
 
-const Home = () => (
-  <div className="animate-fade-in">
-    <div className="home-hero">
-      <div className="home-eyebrow" role="status">
-        <span className="dot" aria-hidden="true" />
-        Powered by Google Gemini AI
-      </div>
-      <h1 className="home-title">
-        Your Smart <span className="text-gradient">Election</span> Assistant
-      </h1>
-      <p className="home-subtitle">
-        Navigate the electoral process with clarity. Get instant, non-partisan answers to your election questions, explore timelines, and simulate voting scenarios.
-      </p>
-      <div className="home-actions">
-        <Link to="/chat">
-          <button className="btn-primary" style={{ padding: '0.8rem 1.8rem', fontSize: '0.95rem' }} aria-label="Start chatting with VoteWise AI">
-            <MessageSquare size={17} aria-hidden="true" /> Start Chatting
-          </button>
-        </Link>
-        <Link to="/timeline">
-          <button className="btn-ghost" style={{ padding: '0.8rem 1.8rem', fontSize: '0.95rem' }} aria-label="Explore the election timeline">
-            <Sparkles size={17} aria-hidden="true" /> Explore Timeline
-          </button>
-        </Link>
-      </div>
-    </div>
-
-    <div className="home-features" role="list" aria-label="App features">
-      <Link to="/chat" className="feature-card feature-card-link" role="listitem">
-        <div className="feature-icon" style={{ background: 'rgba(59,127,255,0.12)', border: '1px solid rgba(59,127,255,0.2)' }} aria-hidden="true">
-          <MessageSquare size={18} color="var(--blue)" />
-        </div>
-        <h3>AI Chat Assistant</h3>
-        <p>Get instant, accurate answers to any election or voting question — 100% non-partisan and fact-based.</p>
-      </Link>
-      <Link to="/timeline" className="feature-card feature-card-link" role="listitem">
-        <div className="feature-icon" style={{ background: 'rgba(139,92,246,0.12)', border: '1px solid rgba(139,92,246,0.2)' }} aria-hidden="true">
-          <Sparkles size={18} color="var(--violet)" />
-        </div>
-        <h3>Election Timeline</h3>
-        <p>Step through the full electoral process — from registration to results — in an interactive visual guide.</p>
-      </Link>
-      <Link to="/simulator" className="feature-card feature-card-link" role="listitem">
-        <div className="feature-icon" style={{ background: 'rgba(6,182,212,0.12)', border: '1px solid rgba(6,182,212,0.2)' }} aria-hidden="true">
-          <Gamepad2 size={18} color="var(--teal)" />
-        </div>
-        <h3>Voting Simulator</h3>
-        <p>Practice real-world voting day scenarios and test your knowledge with an interactive decision tree.</p>
-      </Link>
-    </div>
+const Loader = () => (
+  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 'calc(100vh - 64px)' }}>
+    <div style={{ width: 40, height: 40, border: '3px solid rgba(59,127,255,0.2)', borderTopColor: '#3b7fff', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+    <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
   </div>
 );
 
@@ -68,12 +23,14 @@ function App() {
       <a href="#main-content" className="skip-link">Skip to main content</a>
       <Navbar />
       <main id="main-content" role="main">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/chat" element={<ChatAssistant />} />
-          <Route path="/timeline" element={<Timeline />} />
-          <Route path="/simulator" element={<Simulator />} />
-        </Routes>
+        <Suspense fallback={<Loader />}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/chat" element={<ChatAssistant />} />
+            <Route path="/timeline" element={<Timeline />} />
+            <Route path="/simulator" element={<Simulator />} />
+          </Routes>
+        </Suspense>
       </main>
     </Router>
   );
