@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
-import { Send, User } from 'lucide-react';
+import { Send, User, Volume2 } from 'lucide-react';
 
 const BotIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -36,6 +36,14 @@ export default function ChatAssistant() {
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
+
+  const speak = (text) => {
+    // Strip markdown formatting before speaking
+    const cleanText = text.replace(/[*_#`]/g, '');
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.lang = "en-IN";
+    window.speechSynthesis.speak(utterance);
+  };
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -130,7 +138,25 @@ export default function ChatAssistant() {
               >
                 {msg.role === 'user'
                   ? <span style={{ color: '#fff', fontWeight: 500 }}>{msg.content}</span>
-                  : <ReactMarkdown components={mdComponents}>{msg.content}</ReactMarkdown>
+                  : (
+                    <div style={{ position: 'relative' }}>
+                      <ReactMarkdown components={mdComponents}>{msg.content}</ReactMarkdown>
+                      <button 
+                        onClick={() => speak(msg.content)}
+                        aria-label="Read message aloud"
+                        style={{
+                          background: 'none', border: 'none', color: '#7f8ea3', 
+                          cursor: 'pointer', marginTop: '8px', display: 'flex', 
+                          alignItems: 'center', gap: '5px', fontSize: '0.8rem',
+                          transition: 'color 0.2s'
+                        }}
+                        onMouseOver={e => e.currentTarget.style.color = '#eef2ff'}
+                        onMouseOut={e => e.currentTarget.style.color = '#7f8ea3'}
+                      >
+                        <Volume2 size={14} aria-hidden="true" /> Listen
+                      </button>
+                    </div>
+                  )
                 }
               </div>
             </div>
