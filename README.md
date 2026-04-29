@@ -5,8 +5,10 @@
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-black?style=flat-square&logo=vercel)](https://vote-wise-ai-rho.vercel.app)
 [![Backend](https://img.shields.io/badge/Backend-Google%20Cloud%20Run-blue?style=flat-square&logo=googlecloud)](https://votewise-ai-hqyn.onrender.com)
 [![Gemini](https://img.shields.io/badge/AI-Gemini%202.5%20Flash-orange?style=flat-square&logo=google)](https://ai.google.dev)
+[![Tests](https://img.shields.io/badge/Tests-20%20passing-brightgreen?style=flat-square&logo=jest)](./server/tests)
+[![Accessibility](https://img.shields.io/badge/Accessibility-WCAG%202.1%20AA-blue?style=flat-square)](https://www.w3.org/WAI/WCAG21/quickref/)
 
-VoteWise AI is a full-stack, production-ready web application that educates citizens about the election process with non-partisan AI-powered assistance. It integrates Google's **Gemini 2.5 Flash** model to deliver real-time, contextually accurate answers about voting, eligibility, and the democratic process.
+VoteWise AI is a full-stack, production-ready web application that educates citizens about the election process with non-partisan AI-powered assistance. It integrates Google's **Gemini 2.5 Flash** model to deliver real-time, contextually accurate answers about voting, eligibility, and the democratic process — now with **multilingual support** via Google Cloud Translation API.
 
 ---
 
@@ -15,12 +17,14 @@ VoteWise AI is a full-stack, production-ready web application that educates citi
 | Feature | Description |
 |---|---|
 | 🤖 **AI Chat Assistant** | Non-partisan, real-time election Q&A powered by Gemini AI with strict guardrails |
+| 🌐 **Multilingual Support** | Auto-detects user language (10 Indian languages) and translates responses via Google Cloud Translation API |
 | 🗳️ **Voting Day Simulator** | Interactive scenario-based decision tree to test knowledge of the polling process |
 | 📅 **Election Timeline** | Visual step-by-step guide from voter registration to result declaration |
 | 🛡️ **Rate Limiting** | Global daily request cap + per-IP throttling to protect the free API tier |
-| 💾 **Chat Persistence** | All conversations are logged to MongoDB Atlas for auditability and analytics |
-| 🏠 **Home Navigation** | Dedicated Home link in the navbar with active-state highlighting for all routes |
-| 🃏 **Clickable Feature Cards** | Home page feature cards navigate directly to their respective pages on click |
+| 🔐 **HTTP Security Headers** | Helmet.js middleware adds CSP, HSTS, X-Frame-Options, and more |
+| ♿ **Accessibility (WCAG 2.1 AA)** | Skip links, ARIA live regions, aria-current, keyboard focus rings, screen reader support |
+| 💾 **Chat Persistence** | All conversations are logged to MongoDB Atlas for auditability |
+| ✅ **20 Automated Tests** | Jest + Supertest integration and unit tests covering all core services |
 
 ---
 
@@ -31,19 +35,34 @@ VoteWise AI is a full-stack, production-ready web application that educates citi
 │                  FRONTEND (Vercel)                       │
 │         React.js + Vite · React Router DOM              │
 │    react-markdown · Lucide Icons · Axios · CSS3         │
+│         WCAG 2.1 AA ARIA · Google Fonts API             │
 └─────────────────────┬───────────────────────────────────┘
                       │ HTTPS (REST API)
 ┌─────────────────────▼───────────────────────────────────┐
 │               BACKEND (Google Cloud Run)                 │
 │          Node.js + Express.js · Dockerized              │
-│   express-rate-limit · CORS · Mongoose · dotenv         │
+│   Helmet · express-rate-limit · CORS · Mongoose         │
 └──────────┬──────────────────────────┬───────────────────┘
            │                          │
 ┌──────────▼──────────┐   ┌──────────▼──────────────────┐
-│  MongoDB Atlas      │   │  Google Gemini API           │
-│  Chat Persistence   │   │  gemini-2.5-flash model      │
-└─────────────────────┘   └─────────────────────────────┘
+│  MongoDB Atlas      │   │  Google AI Services          │
+│  Chat Persistence   │   │  · Gemini 2.5 Flash (chat)   │
+└─────────────────────┘   │  · Cloud Translation API     │
+                          │    (multilingual support)    │
+                          └─────────────────────────────┘
 ```
+
+---
+
+## 🌐 Google Services Integrated
+
+| Service | Usage |
+|---|---|
+| **Google Gemini API** (`gemini-2.5-flash`) | Powers the AI chat assistant with constrained, non-partisan election guidance |
+| **Google Cloud Translation API** | Detects user message language; auto-translates AI responses into Hindi, Bengali, Telugu, Marathi, Tamil, Gujarati, Kannada, Malayalam, Punjabi |
+| **Google Cloud Run** | Hosts the containerized Node.js backend at scale, zero cold-start on free tier |
+| **Google Cloud Build** | Automatically builds the Docker container on each git push for CI/CD |
+| **Google Fonts API** | Sora + Inter typefaces loaded via Google Fonts CDN for premium typography |
 
 ---
 
@@ -69,42 +88,62 @@ Guidelines:
 5. Emphasize the importance of verifying their name on the electoral roll.
 ```
 
-**Why this prompt design works:**
-- **Role Anchoring** — `"You are VoteWise AI"` locks the model into a consistent persona and tone.
-- **Topical Guardrails** — Guideline 3 prevents the model from drifting into general knowledge or political commentary.
-- **Misinformation Mitigation** — Guideline 4 instructs the model to actively detect and correct common election myths, reducing hallucination risk.
-- **Civic Responsibility** — Guideline 5 ensures the model always reinforces the most critical step voters miss: verifying electoral roll registration.
+---
+
+## ♿ Accessibility (WCAG 2.1 AA)
+
+Full keyboard and screen reader support implemented across the app:
+
+- **Skip Link** — First focusable element jumps keyboard users past the navbar to `#main-content`
+- **ARIA Landmarks** — `role="navigation"`, `role="main"`, `role="log"` on chat messages
+- **Live Regions** — `aria-live="polite"` on chat messages and timeline step changes; `role="status"` on typing indicator
+- **`aria-current="page"`** — Active nav link announces current page to screen readers
+- **`aria-label`** — Every button, input, and interactive element has a descriptive label
+- **`aria-hidden="true"`** — All decorative icons and avatars are hidden from the accessibility tree
+- **Focus Rings** — `*:focus-visible` outline using brand blue for keyboard-only users
+- **Progressbar ARIA** — Simulator progress tracked with `role="progressbar"`, `aria-valuenow`, `aria-valuemax`
 
 ---
 
-## 🛡️ Security & Rate Limiting
+## ✅ Testing
 
-To protect the free API quota and prevent abuse, the backend implements a **two-layer rate limiting strategy**:
+**20 automated tests passing** across 4 test suites using **Jest** + **Supertest**:
 
-```javascript
-// Layer 1: Global daily cap — stops the entire app from exceeding free quota
-const globalDailyLimiter = rateLimit({
-  windowMs: 24 * 60 * 60 * 1000, // 24 hours
-  max: 1000,                       // 1000 total requests per day (all users combined)
-  keyGenerator: () => 'global_limit',
-});
-
-// Layer 2: Per-IP throttle — prevents individual spam
-const chatLimiter = rateLimit({
-  windowMs: 10 * 60 * 1000, // 10 minutes
-  max: 15,                    // 15 requests per IP per 10 minutes
-});
+```bash
+cd server
+npm test
 ```
+
+| Test Suite | Tests | Coverage |
+|---|---|---|
+| `health.test.js` | GET /api/health — status, content-type | ✅ 2 passing |
+| `chatController.test.js` | Valid message, missing, too-long, empty, lang detection, 500 error | ✅ 6 passing |
+| `geminiService.test.js` | API key checks, model name, response text, error propagation | ✅ 5 passing |
+| `translationService.test.js` | Language detection, translation, full pipeline | ✅ 7 passing |
+
+---
+
+## 🛡️ Security
+
+| Layer | Implementation |
+|---|---|
+| **HTTP Headers** | `helmet.js` — CSP, HSTS, X-Frame-Options, X-Content-Type-Options |
+| **Rate Limiting Layer 1** | Global 1000 req/day cap across all users (protects free API quota) |
+| **Rate Limiting Layer 2** | 15 req/10min per IP (prevents individual abuse) |
+| **Input Validation** | Message required + 1000 character max length guard |
+| **Secrets Management** | `.env` gitignored; credentials never committed; history-scrubbed after incident |
+| **Trust Proxy** | Configured for correct IP resolution behind Cloud Run/Render reverse proxy |
 
 ---
 
 ## ⚙️ How It Works
 
 1. User interacts with the React frontend (Chat, Timeline, or Simulator).
-2. For Chat: frontend sends a `POST /api/chat` request with the user's message.
-3. The Express backend passes the message to **Gemini 2.5 Flash** with the system prompt.
-4. The AI response is returned, saved to **MongoDB Atlas**, and sent back to the frontend.
-5. The frontend renders the response using `react-markdown` (bold, lists, links).
+2. For Chat: frontend sends `POST /api/chat` with the user's message.
+3. Backend validates input, checks rate limits, then calls **Gemini 2.5 Flash** with the system prompt.
+4. The AI response is passed to **Google Cloud Translation API** — language is auto-detected and the response is translated if the user wrote in a non-English Indian language.
+5. The translated response is saved to **MongoDB Atlas** and returned to the frontend.
+6. The frontend renders the response using `react-markdown` (bold, lists, links).
 
 ---
 
@@ -114,6 +153,7 @@ const chatLimiter = rateLimit({
 - Node.js (v18+)
 - MongoDB Atlas URI or local MongoDB
 - Google Gemini API Key from [Google AI Studio](https://aistudio.google.com)
+- Google Cloud Translation API Key from [Google Cloud Console](https://console.cloud.google.com)
 
 ### 1. Clone the repository
 ```bash
@@ -132,12 +172,19 @@ PORT=5000
 MONGO_URI=your_mongodb_connection_string
 GEMINI_API_KEY=your_gemini_api_key
 CLIENT_URL=http://localhost:5173
+GOOGLE_TRANSLATE_API_KEY=your_google_translate_api_key
 ```
 ```bash
 npm run dev
 ```
 
-### 3. Frontend Setup
+### 3. Run Tests
+```bash
+cd server
+npm test
+```
+
+### 4. Frontend Setup
 ```bash
 cd client
 npm install
@@ -170,18 +217,8 @@ gcloud run deploy votewise-api \
   --region us-central1 \
   --allow-unauthenticated \
   --port 5000 \
-  --set-env-vars GEMINI_API_KEY=your_key,MONGO_URI=your_uri,CLIENT_URL=your_frontend_url
+  --set-env-vars GEMINI_API_KEY=your_key,MONGO_URI=your_uri,CLIENT_URL=your_frontend_url,GOOGLE_TRANSLATE_API_KEY=your_translate_key
 ```
-
----
-
-## 🔑 Google Services Used
-
-| Service | Usage |
-|---|---|
-| **Google Gemini API** (`gemini-2.5-flash`) | Powers the AI chat assistant with constrained, non-partisan election guidance |
-| **Google Cloud Run** | Hosts the containerized Node.js backend at scale, with zero cold-start on free tier |
-| **Google Cloud Build** | Automatically builds the Docker container on each git push for continuous deployment |
 
 ---
 
@@ -192,25 +229,40 @@ vote-wise-ai/
 ├── client/                  # React frontend (Vite)
 │   ├── src/
 │   │   ├── pages/
-│   │   │   ├── ChatAssistant.jsx   # Gemini-powered chat UI
+│   │   │   ├── ChatAssistant.jsx   # Gemini-powered chat UI (WCAG 2.1 AA)
 │   │   │   ├── Timeline.jsx        # Interactive election timeline
 │   │   │   └── Simulator.jsx       # Voting day decision tree
-│   │   ├── App.jsx                 # Router + Navbar
-│   │   └── index.css               # Design system (tokens, components)
+│   │   ├── App.jsx                 # Router + Navbar (ARIA landmarks)
+│   │   └── index.css               # Design system (tokens, a11y, components)
 │   └── vercel.json                 # SPA routing config
 └── server/                  # Node.js/Express backend
+    ├── app.js                      # Express app factory (testable)
+    ├── server.js                   # Entry point (listen only)
     ├── controllers/
-    │   └── chatController.js       # Handles chat + MongoDB logging
+    │   └── chatController.js       # Chat handler + translation pipeline
     ├── services/
-    │   └── geminiService.js        # Gemini API integration & system prompt
+    │   ├── geminiService.js        # Gemini API integration & system prompt
+    │   └── translationService.js   # Google Cloud Translation API
     ├── models/
     │   └── Chat.js                 # MongoDB chat schema
     ├── config/
     │   └── db.js                   # MongoDB connection
-    ├── server.js                   # App entry + rate limiting
+    ├── tests/
+    │   ├── health.test.js          # Health endpoint tests
+    │   ├── chatController.test.js  # Chat API integration tests
+    │   ├── geminiService.test.js   # Gemini service unit tests
+    │   └── translationService.test.js # Translation service unit tests
     └── Dockerfile                  # Cloud Run deployment config
 ```
 
 ---
 
-*Built with ❤️ for hackathon submission · Powered by Google Gemini · Ready for production*
+## 🔒 Assumptions
+
+- Multilingual translation is best-effort — if Translation API fails, the app gracefully falls back to the English response and never breaks the chat flow.
+- The app is designed for Indian elections (ECI process), but the civic education framework is applicable globally.
+- Free-tier API limits are protected by two-layer rate limiting; the app is designed to scale within zero-cost constraints.
+
+---
+
+*Built with ❤️ for hackathon submission · Powered by Google Gemini + Google Cloud Translation · WCAG 2.1 AA Accessible · 20 Tests Passing*
