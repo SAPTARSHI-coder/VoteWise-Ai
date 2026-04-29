@@ -7,6 +7,9 @@
 [![Gemini](https://img.shields.io/badge/AI-Gemini%202.5%20Flash-orange?style=flat-square&logo=google)](https://ai.google.dev)
 [![Tests](https://img.shields.io/badge/Tests-20%20passing-brightgreen?style=flat-square&logo=jest)](./server/tests)
 [![Accessibility](https://img.shields.io/badge/Accessibility-WCAG%202.1%20AA-blue?style=flat-square)](https://www.w3.org/WAI/WCAG21/quickref/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+
+> 📖 **Read the Developer Journey:** Check out [From Idea to Production (and a Security Scare)](./docs/00-Hackathon-Journey.md) for a behind-the-scenes look at how this was built.
 
 VoteWise AI is a full-stack, production-ready web application that educates citizens about the election process with non-partisan AI-powered assistance. It integrates Google's **Gemini 2.5 Flash** model to deliver real-time, contextually accurate answers about voting, eligibility, and the democratic process — now with **multilingual support** via Google Cloud Translation API.
 
@@ -219,6 +222,16 @@ gcloud run deploy votewise-api \
   --port 5000 \
   --set-env-vars GEMINI_API_KEY=your_key,MONGO_URI=your_uri,CLIENT_URL=your_frontend_url,GOOGLE_TRANSLATE_API_KEY=your_translate_key
 ```
+
+---
+
+## 📚 Masterclass Documentation
+
+We've written comprehensive, file-by-file "Masterclass" documentation designed to explain **exactly** how this app was built from the ground up. If you are learning React, Node.js, or want to see how we structured the code, check out the `docs/` folder!
+
+- [Backend Deep Dives (`docs/server/`)](./docs/server/)
+- [Frontend Deep Dives (`docs/client/`)](./docs/client/)
+- [Google APIs Explained](./docs/05-Google-APIs-Explained.md)
 
 ---
 
