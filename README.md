@@ -278,4 +278,4 @@ vote-wise-ai/
 
 ---
 
-*Built with ❤️ for hackathon submission · Powered by Google Gemini + Google Cloud Translation · WCAG 2.1 AA Accessible · 20 Tests Passing*
+*Built with ❤️ by **Saptarshi Sadhu** for hackathon submission · Powered by Google Gemini + Google Cloud Translation · WCAG 2.1 AA Accessible · 20 Tests Passing*
