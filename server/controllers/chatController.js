@@ -2,6 +2,9 @@ const { generateAssistantResponse } = require('../services/geminiService');
 const { detectAndTranslate } = require('../services/translationService');
 const Chat = require('../models/Chat');
 
+// Simple in-memory cache for efficiency
+const cache = new Map();
+
 const handleChat = async (req, res) => {
   const { message } = req.body;
 
@@ -12,6 +15,13 @@ const handleChat = async (req, res) => {
   // Input length guard
   if (message.length > 1000) {
     return res.status(400).json({ error: 'Message too long. Please keep it under 1000 characters.' });
+  }
+
+  // Check cache for efficiency win
+  const cacheKey = message.trim().toLowerCase();
+  if (cache.has(cacheKey)) {
+    console.log('⚡ Serving from cache:', cacheKey);
+    return res.status(200).json(cache.get(cacheKey));
   }
 
   try {
@@ -32,11 +42,16 @@ const handleChat = async (req, res) => {
       console.warn('⚠️ Could not save chat to database, but sending response anyway.', dbError.message);
     }
 
-    return res.status(200).json({
+    const responsePayload = {
       reply: translatedResponse,
       detectedLang,
       status: 'success'
-    });
+    };
+
+    // Cache the response
+    cache.set(cacheKey, responsePayload);
+
+    return res.status(200).json(responsePayload);
   } catch (error) {
     console.error('Chat controller error:', error);
     return res.status(500).json({ error: 'Something went wrong processing your message.' });
