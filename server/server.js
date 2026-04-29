@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const connectDB = require('./config/db');
 
@@ -11,6 +12,9 @@ const app = express();
 
 // Trust the reverse proxy (Cloud Run / Render) so rate limiter uses the correct IP
 app.set('trust proxy', 1);
+
+// Security headers — sets X-Frame-Options, CSP, HSTS, X-Content-Type-Options, etc.
+app.use(helmet());
 
 // Middleware
 app.use(cors({
