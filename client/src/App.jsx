@@ -7,7 +7,7 @@ import Simulator from './pages/Simulator';
 import './index.css';
 
 const VoteLogo = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
   </svg>
 );
@@ -15,25 +15,41 @@ const VoteLogo = () => (
 const Navbar = () => {
   const location = useLocation();
   return (
-    <nav className="navbar">
-      <Link to="/" className="navbar-logo">
-        <div className="logo-icon"><VoteLogo /></div>
+    <nav className="navbar" role="navigation" aria-label="Main navigation">
+      <Link to="/" className="navbar-logo" aria-label="VoteWise AI home">
+        <div className="logo-icon" aria-hidden="true"><VoteLogo /></div>
         VoteWise AI
       </Link>
       <div className="nav-links">
-        <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>
-          <HomeIcon size={15} /> Home
+        <Link
+          to="/"
+          className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}
+          aria-current={location.pathname === '/' ? 'page' : undefined}
+        >
+          <HomeIcon size={15} aria-hidden="true" /> Home
         </Link>
-        <Link to="/chat" className={`nav-link ${location.pathname === '/chat' ? 'active' : ''}`}>
-          <MessageSquare size={15} /> Assistant
+        <Link
+          to="/chat"
+          className={`nav-link ${location.pathname === '/chat' ? 'active' : ''}`}
+          aria-current={location.pathname === '/chat' ? 'page' : undefined}
+        >
+          <MessageSquare size={15} aria-hidden="true" /> Assistant
         </Link>
-        <Link to="/timeline" className={`nav-link ${location.pathname === '/timeline' ? 'active' : ''}`}>
-          <Sparkles size={15} /> Timeline
+        <Link
+          to="/timeline"
+          className={`nav-link ${location.pathname === '/timeline' ? 'active' : ''}`}
+          aria-current={location.pathname === '/timeline' ? 'page' : undefined}
+        >
+          <Sparkles size={15} aria-hidden="true" /> Timeline
         </Link>
-        <Link to="/simulator" className={`nav-link ${location.pathname === '/simulator' ? 'active' : ''}`}>
-          <Gamepad2 size={15} /> Simulator
+        <Link
+          to="/simulator"
+          className={`nav-link ${location.pathname === '/simulator' ? 'active' : ''}`}
+          aria-current={location.pathname === '/simulator' ? 'page' : undefined}
+        >
+          <Gamepad2 size={15} aria-hidden="true" /> Simulator
         </Link>
-        <Link to="/chat" className="nav-badge" style={{ marginLeft: '0.5rem' }}>
+        <Link to="/chat" className="nav-badge" style={{ marginLeft: '0.5rem' }} aria-label="Try VoteWise AI chat assistant">
           Try Now →
         </Link>
       </div>
@@ -44,8 +60,8 @@ const Navbar = () => {
 const Home = () => (
   <div className="animate-fade-in">
     <div className="home-hero">
-      <div className="home-eyebrow">
-        <span className="dot" />
+      <div className="home-eyebrow" role="status">
+        <span className="dot" aria-hidden="true" />
         Powered by Google Gemini AI
       </div>
       <h1 className="home-title">
@@ -56,35 +72,35 @@ const Home = () => (
       </p>
       <div className="home-actions">
         <Link to="/chat">
-          <button className="btn-primary" style={{ padding: '0.8rem 1.8rem', fontSize: '0.95rem' }}>
-            <MessageSquare size={17} /> Start Chatting
+          <button className="btn-primary" style={{ padding: '0.8rem 1.8rem', fontSize: '0.95rem' }} aria-label="Start chatting with VoteWise AI">
+            <MessageSquare size={17} aria-hidden="true" /> Start Chatting
           </button>
         </Link>
         <Link to="/timeline">
-          <button className="btn-ghost" style={{ padding: '0.8rem 1.8rem', fontSize: '0.95rem' }}>
-            <Sparkles size={17} /> Explore Timeline
+          <button className="btn-ghost" style={{ padding: '0.8rem 1.8rem', fontSize: '0.95rem' }} aria-label="Explore the election timeline">
+            <Sparkles size={17} aria-hidden="true" /> Explore Timeline
           </button>
         </Link>
       </div>
     </div>
 
-    <div className="home-features">
-      <Link to="/chat" className="feature-card feature-card-link">
-        <div className="feature-icon" style={{ background: 'rgba(59,127,255,0.12)', border: '1px solid rgba(59,127,255,0.2)' }}>
+    <div className="home-features" role="list" aria-label="App features">
+      <Link to="/chat" className="feature-card feature-card-link" role="listitem">
+        <div className="feature-icon" style={{ background: 'rgba(59,127,255,0.12)', border: '1px solid rgba(59,127,255,0.2)' }} aria-hidden="true">
           <MessageSquare size={18} color="var(--blue)" />
         </div>
         <h3>AI Chat Assistant</h3>
         <p>Get instant, accurate answers to any election or voting question — 100% non-partisan and fact-based.</p>
       </Link>
-      <Link to="/timeline" className="feature-card feature-card-link">
-        <div className="feature-icon" style={{ background: 'rgba(139,92,246,0.12)', border: '1px solid rgba(139,92,246,0.2)' }}>
+      <Link to="/timeline" className="feature-card feature-card-link" role="listitem">
+        <div className="feature-icon" style={{ background: 'rgba(139,92,246,0.12)', border: '1px solid rgba(139,92,246,0.2)' }} aria-hidden="true">
           <Sparkles size={18} color="var(--violet)" />
         </div>
         <h3>Election Timeline</h3>
         <p>Step through the full electoral process — from registration to results — in an interactive visual guide.</p>
       </Link>
-      <Link to="/simulator" className="feature-card feature-card-link">
-        <div className="feature-icon" style={{ background: 'rgba(6,182,212,0.12)', border: '1px solid rgba(6,182,212,0.2)' }}>
+      <Link to="/simulator" className="feature-card feature-card-link" role="listitem">
+        <div className="feature-icon" style={{ background: 'rgba(6,182,212,0.12)', border: '1px solid rgba(6,182,212,0.2)' }} aria-hidden="true">
           <Gamepad2 size={18} color="var(--teal)" />
         </div>
         <h3>Voting Simulator</h3>
@@ -97,13 +113,17 @@ const Home = () => (
 function App() {
   return (
     <Router>
+      {/* Skip link — first focusable element, jumps keyboard users past navbar */}
+      <a href="#main-content" className="skip-link">Skip to main content</a>
       <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/chat" element={<ChatAssistant />} />
-        <Route path="/timeline" element={<Timeline />} />
-        <Route path="/simulator" element={<Simulator />} />
-      </Routes>
+      <main id="main-content" role="main">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/chat" element={<ChatAssistant />} />
+          <Route path="/timeline" element={<Timeline />} />
+          <Route path="/simulator" element={<Simulator />} />
+        </Routes>
+      </main>
     </Router>
   );
 }
