@@ -1,5 +1,6 @@
 const { generateAssistantResponse } = require('../services/geminiService');
-const Chat = require('../models/Chat'); // Import the Chat model
+const { detectAndTranslate } = require('../services/translationService');
+const Chat = require('../models/Chat');
 
 const handleChat = async (req, res) => {
   const { message } = req.body;
@@ -8,10 +9,19 @@ const handleChat = async (req, res) => {
     return res.status(400).json({ error: 'Message is required' });
   }
 
+  // Input length guard
+  if (message.length > 1000) {
+    return res.status(400).json({ error: 'Message too long. Please keep it under 1000 characters.' });
+  }
+
   try {
+    // 1. Generate AI response (always in English for accuracy)
     const aiResponse = await generateAssistantResponse(message);
-    
-    // Save user message and AI response to MongoDB
+
+    // 2. Detect user language and translate response if needed (Google Cloud Translation)
+    const { translatedResponse, detectedLang } = await detectAndTranslate(message, aiResponse);
+
+    // 3. Save to MongoDB (save the English response for consistency)
     try {
       const chatLog = new Chat({
         userMessage: message,
@@ -19,11 +29,12 @@ const handleChat = async (req, res) => {
       });
       await chatLog.save();
     } catch (dbError) {
-      console.warn("⚠️ Could not save chat to database, but sending response anyway.", dbError.message);
+      console.warn('⚠️ Could not save chat to database, but sending response anyway.', dbError.message);
     }
 
     return res.status(200).json({
-      reply: aiResponse,
+      reply: translatedResponse,
+      detectedLang,
       status: 'success'
     });
   } catch (error) {
