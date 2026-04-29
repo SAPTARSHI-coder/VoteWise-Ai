@@ -52,19 +52,23 @@ const scenario = [
 ];
 
 const ProgressBar = ({ current, total }) => (
-  <div style={{ display: 'flex', gap: '4px', marginBottom: '2rem' }}>
+  <div
+    style={{ display: 'flex', gap: '4px', marginBottom: '2rem' }}
+    role="progressbar"
+    aria-valuenow={current}
+    aria-valuemin={0}
+    aria-valuemax={total}
+    aria-label={`Scenario progress: step ${current} of ${total}`}
+  >
     {Array.from({ length: total }).map((_, i) => (
       <div
         key={i}
         style={{
-          flex: 1,
-          height: '3px',
-          borderRadius: '99px',
-          background: i < current ? 'var(--gradient-brand)' : 'var(--bg-elevated)',
-          backgroundImage: i < current ? 'var(--gradient-brand)' : 'none',
+          flex: 1, height: '3px', borderRadius: '99px',
           backgroundColor: i < current ? 'var(--blue)' : 'var(--bg-elevated)',
           transition: 'background-color 0.3s',
         }}
+        aria-hidden="true"
       />
     ))}
   </div>
@@ -78,8 +82,7 @@ const Simulator = () => {
   const data = scenario[currentStep];
 
   const handleOption = (nextStep) => {
-    if (!scenario[nextStep].isEnd) setProgress(p => p + 1);
-    else setProgress(p => p + 1);
+    setProgress(p => p + 1);
     setCurrentStep(nextStep);
   };
 
@@ -96,9 +99,15 @@ const Simulator = () => {
       <div className="card" style={{ maxWidth: '700px', margin: '0 auto', padding: '2.5rem' }}>
         <ProgressBar current={progress} total={questionCount + 1} />
 
+        {/* Result screen */}
         {data.isEnd ? (
-          <div className="sim-result animate-fade-in">
-            <div className={`result-icon-wrap ${data.success ? 'success' : 'warn'}`}>
+          <div
+            className="sim-result animate-fade-in"
+            role="alert"
+            aria-live="assertive"
+            aria-label={data.success ? 'Success outcome' : 'Warning outcome'}
+          >
+            <div className={`result-icon-wrap ${data.success ? 'success' : 'warn'}`} aria-hidden="true">
               {data.success
                 ? <CheckCircle size={36} color="var(--green)" />
                 : <AlertTriangle size={36} color="var(--amber)" />
@@ -106,22 +115,29 @@ const Simulator = () => {
             </div>
             <h3 style={{ color: data.success ? 'var(--green)' : 'var(--amber)' }}>{data.title}</h3>
             <p>{data.content}</p>
-            <button className="btn-primary" onClick={reset}>
-              <RefreshCcw size={16} /> Try Again
+            <button className="btn-primary" onClick={reset} aria-label="Restart the simulator from the beginning">
+              <RefreshCcw size={16} aria-hidden="true" /> Try Again
             </button>
           </div>
         ) : (
-          <div className="animate-fade-in" key={currentStep}>
-            <p className="sim-question">{data.question}</p>
-            <div className="sim-options">
+          /* Question + choices */
+          <div
+            className="animate-fade-in"
+            key={currentStep}
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            <p className="sim-question" id="sim-question">{data.question}</p>
+            <div className="sim-options" role="group" aria-labelledby="sim-question">
               {data.options.map((opt, idx) => (
                 <button
                   key={idx}
                   className="sim-option"
                   onClick={() => handleOption(opt.nextStep)}
+                  aria-label={opt.text}
                 >
                   <span>{opt.text}</span>
-                  <ArrowRight size={18} className="sim-option-arrow" />
+                  <ArrowRight size={18} className="sim-option-arrow" aria-hidden="true" />
                 </button>
               ))}
             </div>
