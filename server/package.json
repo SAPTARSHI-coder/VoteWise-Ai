@@ -10,9 +10,15 @@
   },
   "jest": {
     "testEnvironment": "node",
-    "testMatch": ["**/tests/**/*.test.js"],
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ],
     "coverageDirectory": "coverage",
-    "collectCoverageFrom": ["controllers/**/*.js", "services/**/*.js", "routes/**/*.js"]
+    "collectCoverageFrom": [
+      "controllers/**/*.js",
+      "services/**/*.js",
+      "routes/**/*.js"
+    ]
   },
   "keywords": [],
   "author": "",
@@ -21,6 +27,7 @@
   "dependencies": {
     "@google-cloud/translate": "^9.3.0",
     "@google/genai": "^1.50.1",
+    "compression": "^1.8.1",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",

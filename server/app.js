@@ -7,10 +7,14 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const compression = require('compression');
 
 const app = express();
 
 app.set('trust proxy', 1);
+
+// Compression
+app.use(compression());
 
 // Security headers
 app.use(helmet());
